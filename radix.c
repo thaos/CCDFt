@@ -7,11 +7,13 @@ int main() {
 
 	int NbItems = 5;
 	double InputValues[] = { -0.001, 1000, 0.01, -100, 0};
-	double DestinationBuffer[NbItems];
+	int Indexes[NbItems];
+	int IndexBuffer[NbItems];
 	double OutputValues[NbItems];
 	for(int i = 0; i < NbItems ; i++){
 		printf("%3.2f, ", InputValues[i]);
-		DestinationBuffer[i] = InputValues[i];
+		Indexes[i] = i;
+		IndexBuffer[i] = i;
 	}
 	printf("\n");
 		
@@ -28,10 +30,10 @@ int main() {
 		}	
 		
 		for(int i = 0 ; i < NbItems ; i++){       
-			printf("binary: %li\n", *((unsigned long*) &DestinationBuffer[i]));
+			printf("binary: %li\n", *((unsigned long*) &InputValues[IndexBuffer[i]]));
 			printf("right shift: %i\n", (Pass<<3));
-			printf("after shift: %li\n", (*((unsigned long*) &DestinationBuffer[i])>>(Pass<<3)));
-			Radix = (*((unsigned long*) &DestinationBuffer[i])>>(Pass<<3)) & 0xFF;	// Get current byte…
+			printf("after shift: %li\n", (*((unsigned long*) &InputValues[IndexBuffer[i]])>>(Pass<<3)));
+			Radix = (*((unsigned long*) &InputValues[IndexBuffer[i]])>>(Pass<<3)) & 0xFF;	// Get current byte…
 			printf("radix: %i\n", Radix);
 			Counters[Radix]++;                    		// …and update counter
 		}
@@ -63,16 +65,24 @@ int main() {
 		}
 
 		for(int i = 0; i < NbItems ; i++){
-			Radix = (*((unsigned long*) &DestinationBuffer[i])>>(Pass<<3)) & 0xFF;	// Get current byte…
-			OutputValues[Offsets[Radix]++] = DestinationBuffer[i];
+			Radix = (*((unsigned long*) &InputValues[IndexBuffer[i]])>>(Pass<<3)) & 0xFF;	// Get current byte…
+			Indexes[Offsets[Radix]++] = IndexBuffer[i];
 		}
 		for(int i = 0; i < NbItems ; i++){
-			DestinationBuffer[i] = OutputValues[i];
+			IndexBuffer[i] = Indexes[i];
 		}
 	}
 
 	for(int i = 0; i < NbItems ; i++){
-		printf("%3.3f, ", OutputValues[i]);
+		printf("%3.3f,\t ", InputValues[i]);
+	}
+	printf("\n");
+	for(int i = 0; i < NbItems ; i++){
+		printf("%3.3f,\t ", InputValues[Indexes[i]]);
+	}
+	printf("\n");
+	for(int i = 0; i < NbItems ; i++){
+		printf("%i,\t", Indexes[i]);
 	}
 	printf("\n");
 }
